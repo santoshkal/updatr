@@ -3,6 +3,8 @@ module github.com/santoshkal/updatr
 go 1.26.6
 
 require (
+	github.com/stretchr/testify v1.11.1
+	go.uber.org/goleak v1.3.0
 	k8s.io/api v0.36.4
 	k8s.io/apimachinery v0.36.4
 	k8s.io/client-go v0.36.4
