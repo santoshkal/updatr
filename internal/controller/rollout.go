@@ -21,11 +21,7 @@ const (
 // triggerDeploymentRollout patches the Deployment's PodTemplate to force a rollout.
 // It sets/updates RestartAnnotation with the current time, which changes the
 // PodTemplate hash and causes the Deployment controller to create new ReplicaSets.
-func triggerDeploymentRollout(
-	ctx context.Context,
-	c client.Client,
-	deployment *appsv1.Deployment,
-) error {
+func triggerDeploymentRollout(ctx context.Context, c client.Client, deployment *appsv1.Deployment) error {
 	// log.FromContext() retrieves the logger stored in ctx by controller-runtime.
 	logger := log.FromContext(ctx)
 	// deployment.DeepCopy() creates a deep copy for use as the patch base (original).
@@ -73,11 +69,7 @@ func triggerDeploymentRollout(
 
 // triggerStatefulSetRollout patches the StatefulSet's PodTemplate to force a rollout.
 // It mirrors triggerDeploymentRollout but for StatefulSet controller semantics.
-func triggerStatefulSetRollout(
-	ctx context.Context,
-	c client.Client,
-	statefulSet *appsv1.StatefulSet,
-) error {
+func triggerStatefulSetRollout(ctx context.Context, c client.Client, statefulSet *appsv1.StatefulSet) error {
 	// log.FromContext() retrieves the contextual logger.
 	logger := log.FromContext(ctx)
 	// statefulSet.DeepCopy() snapshots the original object for merge-patch diff.

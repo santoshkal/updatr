@@ -30,10 +30,7 @@ type ConfigMapReconciler struct {
 // Reconcile reacts to ConfigMap updates where resourceVersion changed.
 // It lists Deployments and StatefulSets in the same namespace and triggers
 // a rollout for each that references the ConfigMap.
-func (r *ConfigMapReconciler) Reconcile(
-	ctx context.Context,
-	req ctrl.Request,
-) (ctrl.Result, error) {
+func (r *ConfigMapReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	// log.FromContext() retrieves the request-scoped logger.
 	logger := log.FromContext(ctx)
 	// logger.Info() logs the start of ConfigMap reconciliation.
@@ -62,10 +59,7 @@ func (r *ConfigMapReconciler) Reconcile(
 	return ctrl.Result{}, nil
 }
 
-func (r *ConfigMapReconciler) restartDeploymentsForConfigMap(
-	ctx context.Context,
-	cm *corev1.ConfigMap,
-) error {
+func (r *ConfigMapReconciler) restartDeploymentsForConfigMap(ctx context.Context, cm *corev1.ConfigMap) error {
 	var list appsv1.DeploymentList
 	// r.List() lists Deployments in the ConfigMap's namespace.
 	if err := r.List(ctx, &list, client.InNamespace(cm.Namespace)); err != nil {
@@ -92,10 +86,7 @@ func (r *ConfigMapReconciler) restartDeploymentsForConfigMap(
 	return nil
 }
 
-func (r *ConfigMapReconciler) restartStatefulSetsForConfigMap(
-	ctx context.Context,
-	cm *corev1.ConfigMap,
-) error {
+func (r *ConfigMapReconciler) restartStatefulSetsForConfigMap(ctx context.Context, cm *corev1.ConfigMap) error {
 	var list appsv1.StatefulSetList
 	// r.List() lists StatefulSets in the ConfigMap's namespace.
 	if err := r.List(ctx, &list, client.InNamespace(cm.Namespace)); err != nil {
@@ -128,6 +119,7 @@ func (r *ConfigMapReconciler) restartStatefulSetsForConfigMap(
 func (r *ConfigMapReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	// pred.ResourceVersionChanged() builds the filter that compares old vs new RV.
 	rvPredicate := pred.ResourceVersionChanged()
+
 	// ctrl.NewControllerManagedBy() creates a controller builder.
 	// For() sets ConfigMap as the primary resource.
 	// WithEventFilter() installs the RV predicate.

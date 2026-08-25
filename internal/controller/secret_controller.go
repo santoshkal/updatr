@@ -30,10 +30,7 @@ type SecretReconciler struct {
 // Reconcile reacts to Secret updates where resourceVersion changed.
 // It lists Deployments and StatefulSets in the same namespace and triggers
 // a rollout for each that references the Secret via volumes or env.
-func (r *SecretReconciler) Reconcile(
-	ctx context.Context,
-	req ctrl.Request,
-) (ctrl.Result, error) {
+func (r *SecretReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	// log.FromContext() fetches the request-scoped logger.
 	logger := log.FromContext(ctx)
 	// logger.Info() logs the start of reconciliation at info level.
@@ -62,10 +59,7 @@ func (r *SecretReconciler) Reconcile(
 	return ctrl.Result{}, nil
 }
 
-func (r *SecretReconciler) restartDeploymentsForSecret(
-	ctx context.Context,
-	secret *corev1.Secret,
-) error {
+func (r *SecretReconciler) restartDeploymentsForSecret(ctx context.Context, secret *corev1.Secret) error {
 	var list appsv1.DeploymentList
 	// r.List() lists Deployments in the Secret's namespace.
 	if err := r.List(ctx, &list, client.InNamespace(secret.Namespace)); err != nil {
@@ -92,10 +86,7 @@ func (r *SecretReconciler) restartDeploymentsForSecret(
 	return nil
 }
 
-func (r *SecretReconciler) restartStatefulSetsForSecret(
-	ctx context.Context,
-	secret *corev1.Secret,
-) error {
+func (r *SecretReconciler) restartStatefulSetsForSecret(ctx context.Context, secret *corev1.Secret) error {
 	var list appsv1.StatefulSetList
 	// r.List() lists StatefulSets in the Secret's namespace.
 	if err := r.List(ctx, &list, client.InNamespace(secret.Namespace)); err != nil {
@@ -128,6 +119,7 @@ func (r *SecretReconciler) restartStatefulSetsForSecret(
 func (r *SecretReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	// pred.ResourceVersionChanged() returns the RV-change filter predicate.
 	rvPredicate := pred.ResourceVersionChanged()
+
 	// ctrl.NewControllerManagedBy() starts building a controller for this reconciler.
 	// For() declares the primary watched type (Secret).
 	// WithEventFilter() attaches the ResourceVersion predicate.

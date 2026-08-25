@@ -82,6 +82,11 @@ func main() {
 	kubeConfig := ctrl.GetConfigOrDie()
 
 	// ctrl.NewManager() creates a manager that runs controllers and caches.
+	// Caches are an interesting implementation in controller-runtime
+	// that makes the reconcile loop efficient.
+
+	// Refer to a detaild article on caches and reconcile at
+	// https://kubernetes.io/blog/2026/07/29/controller-runtime-cache-explained/
 	mgr, err := ctrl.NewManager(kubeConfig, ctrl.Options{
 		Scheme: scheme,
 		Metrics: metricsserver.Options{
